@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Stream Ordering Logic &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" />
+    <link rel="prev" title="Cascade - a Stream Ordering Library" href="index.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Stream Ordering Logic</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Cascade - a Stream Ordering Library</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="usage.html">Usage</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="stream-ordering-logic">
+<h1>Stream Ordering Logic<a class="headerlink" href="#stream-ordering-logic" title="Link to this heading">¶</a></h1>
+<p>Cascade uses an algorithm based on the academic paper <em>A Fast Recursive Gis Algorithm For Computing Strahler
+Stream Order In Braided And Nonbraided Networks.</em> This can be downloaded from <a class="reference download internal" download="" href="_downloads/b8aeadb513412167f48d0c43ffb913f4/JAWRA_Paper_03043.pdf"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+<p>It is based on the second pseudo-code example which takes into account braided networks.</p>
+<section id="strahler">
+<h2>Strahler<a class="headerlink" href="#strahler" title="Link to this heading">¶</a></h2>
+<p>Full details of the Strahler algorithm (written in 1957) can be found at <a class="reference external" href="http://en.wikipedia.org/wiki/Strahler_number">http://en.wikipedia.org/wiki/Strahler_number</a>.
+In summary all streams start with an order of 1, and will only increase in order when they meet a stream with the
+same magnitude. For example if a second order stream meets a third order stream there is no change.</p>
+<div id='map1' class='map'></div>
+<script>
+    var options = {
+        divName: 'map1',
+        permalink: '#map=15/616346.7/939815.8/0',
+        layerVisibilities: {
+            'Strahler': true,
+            'StrahlerLabels': true
+            }
+    };
+    var widget = MapWidget(options);
+</script></section>
+<section id="shreve">
+<h2>Shreve<a class="headerlink" href="#shreve" title="Link to this heading">¶</a></h2>
+<p>The Shreve algorithm (1966) again starts with an order of 1 for each stream, but whenever two streams meet the outflowing stream’s order
+is the sum of the two input streams.</p>
+<div id='map2' class='map'></div>
+<script>
+    var options = {
+        divName: 'map2',
+        permalink: '#map=15/616346.7/939815.8/0',
+        layerVisibilities: {
+            'Shreve': true,
+            'ShreveLabels': true
+            }
+    };
+    var widget = MapWidget(options);
+</script></section>
+<section id="lakes-and-estuaries">
+<h2>Lakes and Estuaries<a class="headerlink" href="#lakes-and-estuaries" title="Link to this heading">¶</a></h2>
+<p>River networks in Ireland contain features referred to as CONTINUA. These are lines drawn through water bodies, such as
+lakes and estuaries, that allow the river network to remain fully connected. Both the Shreve and Strahler algorithms
+treat these lines as any other river segment, so if two continua of the same order join within the waterbody, the resulting
+stream will increase in order.</p>
+<div id='map3' class='map'></div>
+<script>
+    var options = {
+        divName: 'map3',
+        permalink: '#map=16/557782.2/888159.95/0',
+        layerVisibilities: {
+            'Shreve': true,
+            'ShreveLabels': true
+            }
+    };
+    var widget = MapWidget(options);
+</script><p>Below as an example of an estuary (a transitional waterbody):</p>
+<div id='map3b' class='map'></div>
+<script>
+    var options = {
+        divName: 'map3b',
+        permalink: '#map=15/576084.42/900358.28/0',
+        layerVisibilities: {
+            'Shreve': true,
+            'ShreveLabels': true
+            }
+    };
+    var widget = MapWidget(options);
+</script></section>
+<section id="braided-rivers">
+<h2>Braided Rivers<a class="headerlink" href="#braided-rivers" title="Link to this heading">¶</a></h2>
+<p>Braided rivers, where a stream can split into two downstream segments, can be handled by the stream ordering algorithm.
+For reference two loops were found in the latest river networks. In the example below a segment (<code class="docutils literal notranslate"><span class="pre">36_2270a</span></code>)
+splits in two directions. This is handled by the ordering algorithms - both Shreve and Strahler order remain the same.</p>
+<div id='map4' class='map'></div>
+<script>
+    var options = {
+        divName: 'map4',
+        permalink: '#map=15/602518.4/865762.4/0',
+        layerVisibilities: {
+            'Shreve': true,
+            'ShreveLabels': true,
+            'Flow': true
+            }
+    };
+    var widget = MapWidget(options);
+</script></section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Cascade - a Stream Ordering Library</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="usage.html">Usage</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

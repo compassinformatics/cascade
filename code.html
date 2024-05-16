@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Codebase &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="History" href="history.html" />
+    <link rel="prev" title="Authors" href="authors.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Codebase</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="authors.html">Authors</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="history.html">History</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="codebase">
+<h1>Codebase<a class="headerlink" href="#codebase" title="Link to this heading">¶</a></h1>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>ArcGIS is not required to use cascade.py - it is a standard Python library.</p></li>
+<li><p>All code has been checked using pylint and conforms to the PEP8 Python standards.</p></li>
+<li><p>There are unit tests that ensure correct output.</p></li>
+</ul>
+<section id="orderer">
+<h2>Orderer<a class="headerlink" href="#orderer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cascade.orderer.Orderer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cascade.orderer.</span></span><span class="sig-name descname"><span class="pre">Orderer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SEG_CD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cascade/orderer.html#Orderer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cascade.orderer.Orderer" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="cascade.orderer.Orderer.assign_order">
+<span class="sig-name descname"><span class="pre">assign_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MultiDiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/cascade/orderer.html#Orderer.assign_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cascade.orderer.Orderer.assign_order" title="Link to this definition">¶</a></dt>
+<dd><p>The new braided version can also easily deal with
+multiple drainage outlets. To address such cases, the
+procedure must be executed separately for each pour
+point (outlet) present in the network. When the proce-
+dure first reaches the ‘split node,’ where the network
+splits into multiple drainage paths, it will not follow
+the other paths, since they do not flow into that split
+node, but rather out of it. Then, in successive calls for
+other outlets, the procedure can use already deter-
+mined stream orders of the split node’s upstream arcs
+instead of repeating that upstream part’s traversal.
+Of course, all external dictionaries should be shared
+among the calls to maintain consistency among them</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cascade.orderer.Orderer.get_strahler_order">
+<span class="sig-name descname"><span class="pre">get_strahler_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">up_orders</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cascade/orderer.html#Orderer.get_strahler_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cascade.orderer.Orderer.get_strahler_order" title="Link to this definition">¶</a></dt>
+<dd><p>up_orders is a list of tuples containing (order, origin_node)</p>
+<p>e.g. [(2, 3), (1, 6)]</p>
+<p>Returns:</p>
+<p>max_order_origin - the id of the node
+max_order_count - the number of tuples with the maximum order
+max_order - the maximum order in the list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cascade.orderer.Orderer.make_dicts">
+<span class="sig-name descname"><span class="pre">make_dicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">MultiDiGraph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cascade/orderer.html#Orderer.make_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cascade.orderer.Orderer.make_dicts" title="Link to this definition">¶</a></dt>
+<dd><p>For braided networks the preprocessing procedure should create an
+InflowingArcsPerNode dictionary (instead of an ArcsPerNode dictionary) that would contain for every
+node only those arcs that flow into that same node. It should also create a FromNodesPerArc dictionary
+(instead of a NodesPerArc dictionary) to contain the from- nodes of each arc.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cascade.orderer.Orderer.order_network">
+<span class="sig-name descname"><span class="pre">order_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arc_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_nodes_per_arc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inflowing_arcs_per_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">originating_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/cascade/orderer.html#Orderer.order_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cascade.orderer.Orderer.order_network" title="Link to this definition">¶</a></dt>
+<dd><p>Based on <a class="reference external" href="https://github.com/sahg/PyTOPKAPI/blob/master/pytopkapi/parameter_utils/create_file.py">create_file.py</a> (BSD license)
+See <a class="reference external" href="http://sahg.github.io/PyTOPKAPI/">PyTOPKAPI Documentation</a> for more details</p>
+<p>Calculate the Strahler stream order</p>
+<p>This function recursively computes the Strahler stream order using
+the algorithm described by Gleyzer et al. (2004). The sequence of
+stream orders for the starting arc and each upstream arc is
+returned in the dictionary <cite>stream_orders</cite>.</p>
+<p>This also introduces the concept of river segments - collections of arcs of the same order</p>
+<ul class="simple">
+<li><p>originating_node is used to keep track of the node at the top of the path</p></li>
+<li><p>segments - an empty Segments dictionary, global to the procedure, is assumed to be created before
+execution of the procedure. This dictionary will hold the actual segment ID for each network arc.</p></li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="authors.html">Authors</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="history.html">History</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

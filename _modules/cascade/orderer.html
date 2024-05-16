@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cascade.orderer &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="../../_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="../../_static/documentation_options.js?v=20623aea"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="../../_static/ol.js?v=ae11f0a3"></script>
+    <script src="../../_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="../../_static/viewer.js?v=4d271811"></script>
+    <script src="../../_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>cascade.orderer</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <h1>Source code for cascade.orderer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">wayfarer</span> <span class="kn">import</span> <span class="n">functions</span>
+<span class="kn">import</span> <span class="nn">networkx</span>
+<span class="kn">from</span> <span class="nn">networkx</span> <span class="kn">import</span> <span class="n">DiGraph</span><span class="p">,</span> <span class="n">MultiDiGraph</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;cascade&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Orderer">
+<a class="viewcode-back" href="../../code.html#cascade.orderer.Orderer">[docs]</a>
+<span class="k">class</span> <span class="nc">Orderer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SEG_CD&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code_field</span> <span class="o">=</span> <span class="n">code_field</span>
+
+<div class="viewcode-block" id="Orderer.make_dicts">
+<a class="viewcode-back" href="../../code.html#cascade.orderer.Orderer.make_dicts">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_dicts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">:</span> <span class="n">DiGraph</span> <span class="o">|</span> <span class="n">MultiDiGraph</span><span class="p">,</span> <span class="n">code_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For braided networks the preprocessing procedure should create an</span>
+<span class="sd">        InflowingArcsPerNode dictionary (instead of an ArcsPerNode dictionary) that would contain for every</span>
+<span class="sd">        node only those arcs that flow into that same node. It should also create a FromNodesPerArc dictionary</span>
+<span class="sd">        (instead of a NodesPerArc dictionary) to contain the from- nodes of each arc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">code_field</span><span class="p">:</span>
+            <span class="n">code_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_field</span>
+
+        <span class="n">from_nodes_per_arc</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">inflowing_arcs_per_node</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">originating_node</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Lanfear property - this dict is updated during ordering</span>
+
+        <span class="c1"># make empty lists for all nodes</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">inflowing_arcs_per_node</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+            <span class="c1"># for every edge</span>
+            <span class="n">seg_cd</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">code_field</span><span class="p">]</span>
+
+            <span class="n">from_nodes_per_arc</span><span class="p">[</span><span class="n">seg_cd</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">originating_node</span><span class="p">[</span><span class="n">seg_cd</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="o">==</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># end node</span>
+                    <span class="n">inflowing_arcs_per_node</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg_cd</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">originating_node</span><span class="p">,</span> <span class="n">from_nodes_per_arc</span><span class="p">,</span> <span class="n">inflowing_arcs_per_node</span></div>
+
+
+<div class="viewcode-block" id="Orderer.get_strahler_order">
+<a class="viewcode-back" href="../../code.html#cascade.orderer.Orderer.get_strahler_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_strahler_order</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">up_orders</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        up_orders is a list of tuples containing (order, origin_node)</span>
+
+<span class="sd">        e.g. [(2, 3), (1, 6)]</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        max_order_origin - the id of the node</span>
+<span class="sd">        max_order_count - the number of tuples with the maximum order</span>
+<span class="sd">        max_order - the maximum order in the list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">max_order</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_order_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_order_origin</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">order</span><span class="p">,</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">up_orders</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">order</span> <span class="o">&gt;</span> <span class="n">max_order</span><span class="p">:</span>
+                <span class="n">max_order</span> <span class="o">=</span> <span class="n">order</span>
+                <span class="n">max_order_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">max_order_origin</span> <span class="o">=</span> <span class="n">origin</span>
+            <span class="k">elif</span> <span class="n">order</span> <span class="o">==</span> <span class="n">max_order</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">origin</span> <span class="o">!=</span> <span class="n">max_order_origin</span><span class="p">:</span>
+                    <span class="n">max_order_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">max_order_origin</span><span class="p">,</span> <span class="n">max_order_count</span><span class="p">,</span> <span class="n">max_order</span></div>
+
+
+    <span class="k">def</span> <span class="nf">create_ids_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+
+        <span class="c1"># assume maximum river order of 15</span>
+        <span class="n">segment_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">100000</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">segment_ids</span>
+
+<div class="viewcode-block" id="Orderer.order_network">
+<a class="viewcode-back" href="../../code.html#cascade.orderer.Orderer.order_network">[docs]</a>
+    <span class="k">def</span> <span class="nf">order_network</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">arc_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">from_nodes_per_arc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">inflowing_arcs_per_node</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">originating_node</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Based on `create_file.py &lt;https://github.com/sahg/PyTOPKAPI/blob/master/pytopkapi/parameter_utils/create_file.py&gt;`_ (BSD license)</span>
+<span class="sd">        See `PyTOPKAPI Documentation &lt;http://sahg.github.io/PyTOPKAPI/&gt;`_ for more details</span>
+
+<span class="sd">        Calculate the Strahler stream order</span>
+
+<span class="sd">        This function recursively computes the Strahler stream order using</span>
+<span class="sd">        the algorithm described by Gleyzer et al. (2004). The sequence of</span>
+<span class="sd">        stream orders for the starting arc and each upstream arc is</span>
+<span class="sd">        returned in the dictionary `stream_orders`.</span>
+
+<span class="sd">        This also introduces the concept of river segments - collections of arcs of the same order</span>
+
+<span class="sd">        + originating_node is used to keep track of the node at the top of the path</span>
+<span class="sd">        + segments - an empty Segments dictionary, global to the procedure, is assumed to be created before</span>
+<span class="sd">          execution of the procedure. This dictionary will hold the actual segment ID for each network arc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># import traceback</span>
+        <span class="c1"># print(count, arc_id, len(traceback.format_stack()))</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visited</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">visited</span><span class="p">)</span>
+
+        <span class="n">from_nodes</span> <span class="o">=</span> <span class="n">from_nodes_per_arc</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span>
+        <span class="n">in_segments</span> <span class="o">=</span> <span class="n">inflowing_arcs_per_node</span><span class="p">[</span><span class="n">from_nodes</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># only one edge so set order to 1</span>
+            <span class="n">shreve_order</span><span class="p">,</span> <span class="n">strahler_order</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">strahler_order</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">shreve_order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upstream_orders</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">in_segments</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">arc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visited</span><span class="p">:</span>
+                    <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_network</span><span class="p">(</span>
+                        <span class="n">arc</span><span class="p">,</span>
+                        <span class="n">from_nodes_per_arc</span><span class="p">,</span>
+                        <span class="n">inflowing_arcs_per_node</span><span class="p">,</span>
+                        <span class="n">originating_node</span><span class="p">,</span>
+                        <span class="n">count</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">origin</span> <span class="o">=</span> <span class="n">originating_node</span><span class="p">[</span><span class="n">arc</span><span class="p">]</span>
+                    <span class="n">upstream_orders</span><span class="p">[</span><span class="n">arc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">origin</span> <span class="o">=</span> <span class="n">originating_node</span><span class="p">[</span><span class="n">arc</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">arc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span>
+                        <span class="ow">and</span> <span class="n">arc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span>
+                    <span class="p">):</span>
+                        <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span><span class="p">[</span><span class="n">arc</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span><span class="p">[</span><span class="n">arc</span><span class="p">],</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arc</span><span class="p">)</span>
+
+                    <span class="n">upstream_orders</span><span class="p">[</span><span class="n">arc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+
+            <span class="c1"># Shreve - add together all upstream orders</span>
+            <span class="n">shreve_order</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">shreve</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">shreve</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">upstream_orders</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">shreve_order</span>
+
+            <span class="c1"># Strahler</span>
+            <span class="n">up_orders</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">strahler</span><span class="p">,</span> <span class="n">orig</span><span class="p">)</span> <span class="k">for</span> <span class="n">strahler</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">orig</span> <span class="ow">in</span> <span class="n">upstream_orders</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">]</span>
+
+            <span class="n">up_orders</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># sort by stream order ascending</span>
+            <span class="n">max_order_origin</span><span class="p">,</span> <span class="n">max_order_count</span><span class="p">,</span> <span class="n">max_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_strahler_order</span><span class="p">(</span>
+                <span class="n">up_orders</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">max_order_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># two upstream segments have the maximum order</span>
+                <span class="c1"># so the segment order increases</span>
+                <span class="n">strahler_order</span> <span class="o">=</span> <span class="n">max_order</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">originating_node</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_nodes</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># otherwise it remains the same</span>
+                <span class="n">strahler_order</span> <span class="o">=</span> <span class="n">max_order</span>
+                <span class="n">originating_node</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_order_origin</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">strahler_order</span>
+
+        <span class="n">current_origin_node</span> <span class="o">=</span> <span class="n">originating_node</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span>
+        <span class="n">current_order</span> <span class="o">=</span> <span class="n">strahler_order</span>
+
+        <span class="k">if</span> <span class="n">current_origin_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids_per_originating_node</span><span class="p">:</span>
+            <span class="c1"># create a new segment id</span>
+
+            <span class="n">seg_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids</span><span class="p">[</span><span class="n">current_order</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids</span><span class="p">[</span><span class="n">current_order</span><span class="p">]</span> <span class="o">=</span> <span class="n">seg_id</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids_per_originating_node</span><span class="p">[</span><span class="n">current_origin_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">seg_id</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seg_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids_per_originating_node</span><span class="p">[</span><span class="n">current_origin_node</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="n">arc_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">seg_id</span>
+
+        <span class="k">return</span> <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span></div>
+
+
+    <span class="k">def</span> <span class="nf">create_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ids_array</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visited</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_ids_per_originating_node</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segments</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">merge_result_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="n">my_dicts</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strahler_stream_orders</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shreve_stream_orders</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visited</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">my_dicts</span><span class="p">:</span>  <span class="c1"># you can list as many input dicts as you want here</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dd</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dd</span>
+
+<div class="viewcode-block" id="Orderer.assign_order">
+<a class="viewcode-back" href="../../code.html#cascade.orderer.Orderer.assign_order">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_order</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">:</span> <span class="n">DiGraph</span> <span class="o">|</span> <span class="n">MultiDiGraph</span><span class="p">,</span> <span class="n">selected_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The new braided version can also easily deal with</span>
+<span class="sd">        multiple drainage outlets. To address such cases, the</span>
+<span class="sd">        procedure must be executed separately for each pour</span>
+<span class="sd">        point (outlet) present in the network. When the proce-</span>
+<span class="sd">        dure first reaches the &#39;split node,&#39; where the network</span>
+<span class="sd">        splits into multiple drainage paths, it will not follow</span>
+<span class="sd">        the other paths, since they do not flow into that split</span>
+<span class="sd">        node, but rather out of it. Then, in successive calls for</span>
+<span class="sd">        other outlets, the procedure can use already deter-</span>
+<span class="sd">        mined stream orders of the split node&#39;s upstream arcs</span>
+<span class="sd">        instead of repeating that upstream part&#39;s traversal.</span>
+<span class="sd">        Of course, all external dictionaries should be shared</span>
+<span class="sd">        among the calls to maintain consistency among them</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">code_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code_field</span>
+
+        <span class="n">sink_edges</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">get_sink_edges</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">selected_keys</span><span class="p">:</span>
+            <span class="c1"># if a key error here then one of the selected_keys is not a sink</span>
+            <span class="n">sink_edges</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">sink_edges</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">selected_keys</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_globals</span><span class="p">()</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%i</span><span class="s2"> sinks&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sink_edges</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">sink_seg_cd</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sink_edges</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sink </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%i</span><span class="s2"> / </span><span class="si">%i</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">sink_seg_cd</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sink_edges</span><span class="p">))</span>
+
+            <span class="c1"># http://stackoverflow.com/questions/13914920/networkx-extract-the-smallest-connected-subgraph</span>
+            <span class="n">subnet</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span>
+                <span class="n">networkx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">(),</span> <span class="n">edge</span><span class="p">[</span><span class="s2">&quot;NODEID_TO&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="n">originating_node</span><span class="p">,</span> <span class="n">from_nodes_per_arc</span><span class="p">,</span> <span class="n">inflowing_arcs_per_node</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_dicts</span><span class="p">(</span><span class="n">subnet</span><span class="p">,</span> <span class="n">code_field</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">order_network</span><span class="p">(</span>
+                <span class="n">sink_seg_cd</span><span class="p">,</span>
+                <span class="n">from_nodes_per_arc</span><span class="p">,</span>
+                <span class="n">inflowing_arcs_per_node</span><span class="p">,</span>
+                <span class="n">originating_node</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_result_dicts</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

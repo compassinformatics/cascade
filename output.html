@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Output &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Recursion" href="recursion.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Output</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="usage.html">Usage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="recursion.html">Recursion</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="output">
+<h1>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">cascade.py</span></code> library can be used to add 4 new fields to a river segment dataset.</p>
+<img alt="_images/dbf.png" src="_images/dbf.png" />
+<p>These are as follows:</p>
+<ul class="simple">
+<li><p>STRAHLER - field containing the Strahler stream order. A value of 1 indicates a first-order stream. The maximum order in
+Ireland is 7</p></li>
+<li><p>SHREVE - field containing the Shreve stream order. These range from 1 to 5482.</p></li>
+<li><p>PATH_ID - a unique ID for each path - a collection of contiguous segments of the same Strahler order</p></li>
+<li><p>VISITED - the order the segment was checked by the algorithm within the hydro network (can be ignored)</p></li>
+</ul>
+<section id="arcmap-layer-files">
+<h2>ArcMap Layer Files<a class="headerlink" href="#arcmap-layer-files" title="Link to this heading">¶</a></h2>
+<p>Two layer files that can be used in ArcMap are provided here for convenience - <a class="reference download internal" download="" href="_downloads/73000a9633bbb7020093f85a60758e6b/layers.zip"><code class="xref download docutils literal notranslate"><span class="pre">layers.zip</span></code></a>.
+They can also be easily recreated.</p>
+<p>For Strahler - simply set the line width to the STRAHLER field.</p>
+<p>As Shreve values increase exponentially, a logarithmic value can be used for display. The image below shows how to do
+this in ArcMap:</p>
+<img alt="_images/log_symbology.png" src="_images/log_symbology.png" />
+<p>When applying the Shreve layer in ArcMap, an error message is incorrectly displayed “Minimum and/or Maximum Data Value &lt;=0”.
+Clicking past these errors, and then reselecting the Normalization field to “&lt;LOG&gt;” applies the layer correctly.</p>
+</section>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="usage.html">Usage</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="recursion.html">Recursion</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

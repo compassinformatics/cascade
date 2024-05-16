@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Usage &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Output" href="output.html" />
+    <link rel="prev" title="Stream Ordering Logic" href="logic.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Usage</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="logic.html">Stream Ordering Logic</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="output.html">Output</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h1>
+<p>Below is a sample script indicating how the <code class="docutils literal notranslate"><span class="pre">cascade.py</span></code> library can be used.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wayfarer</span> <span class="kn">import</span> <span class="n">loader</span>
+<span class="kn">from</span> <span class="nn">cascade</span> <span class="kn">import</span> <span class="n">orderer</span>
+
+<span class="c1"># load a network</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_network_from_file</span><span class="p">(</span><span class="s2">&quot;./docs/examples/40_directed_net.dat&quot;</span><span class="p">)</span>
+<span class="n">o</span> <span class="o">=</span> <span class="n">orderer</span><span class="o">.</span><span class="n">Orderer</span><span class="p">(</span><span class="n">code_field</span><span class="o">=</span><span class="s2">&quot;EDGE_ID&quot;</span><span class="p">)</span>
+
+<span class="c1"># assign orders to the network</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">assign_order</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of edges with an order: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># loop through orders</span>
+<span class="k">for</span> <span class="n">edge_id</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">orders</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]:</span>
+    <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;EdgeId: </span><span class="si">{</span><span class="n">edge_id</span><span class="si">}</span><span class="s2"> Strahler Order: </span><span class="si">{</span><span class="n">strahler_order</span><span class="si">}</span><span class="s2"> Shreve Order: </span><span class="si">{</span><span class="n">shreve_order</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+<span class="c1"># get a Strahler order for a specific edge</span>
+<span class="n">edge_id</span> <span class="o">=</span> <span class="mi">197</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">orders</span><span class="p">[</span><span class="mi">197</span><span class="p">])</span>
+<span class="c1"># orders is a dictionary using the edge id as a key, and values as a list in the</span>
+<span class="c1"># following format</span>
+<span class="c1"># strahler_stream_orders shreve_stream_orders segments visited</span>
+<span class="c1"># [1, 1, 100007, 9]</span>
+
+<span class="n">strahler_order</span> <span class="o">=</span> <span class="n">orders</span><span class="p">[</span><span class="mi">197</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strahler order for </span><span class="si">{</span><span class="n">edge_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">strahler_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="logic.html">Stream Ordering Logic</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="output.html">Output</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

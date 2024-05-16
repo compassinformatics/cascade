@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cascade - a Stream Ordering Library &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Stream Ordering Logic" href="logic.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="#">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Cascade - a Stream Ordering Library</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="#">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="logic.html">Stream Ordering Logic</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="cascade-a-stream-ordering-library">
+<h1>Cascade - a Stream Ordering Library<a class="headerlink" href="#cascade-a-stream-ordering-library" title="Link to this heading">¶</a></h1>
+<div id='map1' class='map'></div>
+<script>
+    var options = {
+        divName: 'map1',
+        permalink: '#map=15/602518.4/865762.4/0',
+        layerVisibilities: {
+            'Strahler': true,
+            'StrahlerLabels': true
+            }
+    };
+    var widget = MapWidget(options);
+</script><p>Cascade is a Python library to assign stream orders to river networks. Classification of streams using orders give an
+indication of the size and strength of rivers, likelihood of flooding, and to help to determine what wildlife may be present.</p>
+<p>Stream ordering can be used to:</p>
+<ul class="simple">
+<li><p>sort upstream features based on stream by order, ensuring results along a main channel are given
+priority</p></li>
+<li><p>symbolise rivers and to allow subsets of rivers to be shown at different zoom levels</p></li>
+<li><p>give a rough indicator of river capacity</p></li>
+<li><p>provide categories when reporting on water quality</p></li>
+</ul>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cascade-rivers
+</pre></div>
+</div>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logic.html">Stream Ordering Logic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="logic.html#strahler">Strahler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logic.html#shreve">Shreve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logic.html#lakes-and-estuaries">Lakes and Estuaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logic.html#braided-rivers">Braided Rivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="output.html#arcmap-layer-files">ArcMap Layer Files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="recursion.html">Recursion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Codebase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code.html#orderer">Orderer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id1">2.1.0 (2024-05-16)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id2">2.0.0 (2022-02-15)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id3">1.1.0 (2016-11-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html#id4">1.0.0 (2015-12-12)</a></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="#">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="logic.html">Stream Ordering Logic</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Recursion &#8212; cascade 2.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=dfa0e015" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cd009d9d" />
+    <link rel="stylesheet" type="text/css" href="_static/ol.css?v=4f8f1c3a" />
+    <link rel="stylesheet" type="text/css" href="_static/ol-layerswitcher.css?v=52d7c6e5" />
+    <script src="_static/documentation_options.js?v=20623aea"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/jquery-3.6.4.min.js?v=b5b0f0f3"></script>
+    <script src="_static/ol.js?v=ae11f0a3"></script>
+    <script src="_static/ol-layerswitcher.js?v=14a32a3f"></script>
+    <script src="_static/viewer.js?v=4d271811"></script>
+    <script src="_static/proj4.js?v=e846040e"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authors" href="authors.html" />
+    <link rel="prev" title="Output" href="output.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>cascade 2.1.0 documentation</span></a></h1>
+        <h2 class="heading"><span>Recursion</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="output.html">Output</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="authors.html">Authors</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <section id="recursion">
+<h1>Recursion<a class="headerlink" href="#recursion" title="Link to this heading">¶</a></h1>
+<p>This page contains notes on the use of recursion in the cascade library, and on Python in general. These were written
+when using Python 2.7 so may no longer be applicable.</p>
+<ul>
+<li><p>Longest path in the country is 159 segments (01_951 to 01_7100)</p></li>
+<li><p>Python maximum recursion limit is 1000 (a conservative value)</p></li>
+<li><p>No tail call optimisation. See <a class="reference external" href="http://neopythonic.blogspot.pt/2009/04/tail-recursion-elimination.html">http://neopythonic.blogspot.pt/2009/04/tail-recursion-elimination.html</a></p>
+<p>From Guido van Rossum:</p>
+<blockquote>
+<div><p>TRE is incompatible with nice stack traces: when a tail recursion is eliminated,
+there’s no stack frame left to use to print a traceback when something goes wrong later
+the idea that TRE is merely an optimization, which each Python implementation can choose to implement or not, is wrong. Once tail recursion elimination exists,
+developers will start writing code that depends on it, and their code won’t run on implementations that don’t provide it</p>
+</div></blockquote>
+</li>
+<li><p>Python prevents the interpreter stack from growing larger than <code class="docutils literal notranslate"><span class="pre">sys.getrecursionlimit()</span></code>. When you hit that limit you get
+<code class="docutils literal notranslate"><span class="pre">Fatal</span> <span class="pre">Python</span> <span class="pre">error:</span> <span class="pre">Cannot</span> <span class="pre">recover</span> <span class="pre">from</span> <span class="pre">stack</span> <span class="pre">overflow.</span></code></p>
+<p>You can cause a ‘real’ stack overflow if you call sys.setrecursionlimit(N) with a value of N larger than your system can
+actually handle and then try to recurse to that depth. At some point your system will run out of stack space
+and the Python interpreter will crash.</p>
+</li>
+<li><p>If the exercise is intended to be recursion-based, a tail-call optimized language, like a lisp/Scheme</p></li>
+<li><p>Program allocated a stack - set amount of memory limited to RAM - other applications.</p>
+<p>When a program attempts to use more space than is available on the call stack (that is, when it attempts to access memory
+beyond the call stack’s bounds, which is essentially a buffer overflow), the stack is said to overflow,
+typically resulting in a program crash</p>
+</li>
+<li><p><a class="reference external" href="http://deeplearning.net/software/theano/tutorial/python-memory-management.html">http://deeplearning.net/software/theano/tutorial/python-memory-management.html</a></p>
+<p>Freeing memory - in general you can’t. Even if you remove all the references to an object, it is left to the python
+implementation to re-use or free the memory.
+Approach based on scientific paper.</p>
+</li>
+</ul>
+</section>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="output.html">Output</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="authors.html">Authors</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, Compass Informatics.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    </div>
+  </body>
+</html>
