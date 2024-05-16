@@ -40,7 +40,7 @@ jobs:
           flake8 .
       - name: Check types with mypy
         run: |
-          mypy cascade tests scripts
+          mypy cascade tests docs/examples
       #- name: Test doctests with pytest
       #  run: |
       #    PYTHONPATH=. pytest --doctest-modules
