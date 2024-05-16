@@ -1,0 +1,12 @@
+pytest
+pytest-benchmark
+pytest-cov
+flake8
+black
+coveralls
+mypy
+
+# for docs
+sphinx
+sphinx-material
+sphinx-autodoc-typehints

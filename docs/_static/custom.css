@@ -1,0 +1,41 @@
+.highlight .err {
+    border: none;
+}
+
+.map:-moz-full-screen {
+    height: 100%;
+}
+
+.map:-webkit-full-screen {
+    height: 100%;
+}
+
+.map:-ms-fullscreen {
+    height: 100%;
+}
+
+.map:fullscreen {
+    height: 100%;
+}
+
+.ol-rotate {
+    top: 3em;
+}
+
+.map {
+    width: 100%;
+    height: 300px;
+    border: solid 1px gray;
+}
+
+div.footer{
+    text-align: center
+}
+
+img.bordered-image {
+    border: 1px solid gray !important;
+}
+
+.bw {
+    filter: grayscale(100%);
+}

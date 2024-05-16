@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{b56b80ba-fb69-454b-9818-5b95b0cb0437}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>
+    </StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>MSBuild|cascade|$(MSBuildProjectFullPath)</InterpreterId>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Name>cascade</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".flake8" />
+    <Content Include=".gitignore" />
+    <Content Include=".mypy.ini" />
+    <Content Include="AUTHORS.rst" />
+    <Content Include="build_docs.ps1" />
+    <Content Include="dev_setup.ps1" />
+    <Content Include="docs\authors.rst" />
+    <Content Include="docs\code.rst" />
+    <Content Include="docs\examples\40_directed_net.dat" />
+    <Content Include="docs\files\layers.zip" />
+    <Content Include="docs\files\shreve.lyr" />
+    <Content Include="docs\files\strahler.lyr" />
+    <Content Include="docs\history.rst" />
+    <Content Include="docs\images\blocked_zip.png" />
+    <Content Include="docs\images\dbf.png" />
+    <Content Include="docs\images\log_symbology.png" />
+    <Content Include="docs\images\overlap.png" />
+    <Content Include="docs\images\waves.png" />
+    <Content Include="docs\images\wavesfull.png" />
+    <Content Include="docs\index.rst" />
+    <Content Include="docs\files\JAWRA_Paper_03043.pdf" />
+    <Content Include="docs\logic.rst" />
+    <Content Include="docs\output.rst" />
+    <Content Include="docs\recursion.rst" />
+    <Content Include="docs\usage.rst" />
+    <Content Include="docs\_static\custom.css" />
+    <Content Include="docs\_static\jquery-3.6.4.min.js" />
+    <Content Include="docs\_static\ol-layerswitcher.css" />
+    <Content Include="docs\_static\ol-layerswitcher.js" />
+    <Content Include="docs\_static\ol.css" />
+    <Content Include="docs\_static\ol.js" />
+    <Content Include="docs\_static\proj4.js" />
+    <Content Include="docs\_static\viewer.js" />
+    <Content Include="HISTORY.rst" />
+    <Content Include="LICENSE" />
+    <Content Include="logs\placeholder.txt" />
+    <Content Include="MANIFEST.in" />
+    <Content Include="ReadMe.rst" />
+    <Content Include="requirements.txt" />
+    <Content Include="run_local.ps1" />
+    <Content Include="tests\data\HydroJunction39.cpg" />
+    <Content Include="tests\data\HydroJunction39.dbf" />
+    <Content Include="tests\data\HydroJunction39.prj" />
+    <Content Include="tests\data\HydroJunction39.shp" />
+    <Content Include="tests\data\HydroJunction39.shp.xml" />
+    <Content Include="tests\data\HydroJunction39.shx" />
+    <Content Include="tests\data\HydroNetwork01_02_40.pickled" />
+    <Content Include="tests\data\HydroNetwork03.pickled" />
+    <Content Include="tests\data\HydroNetwork39.pickled" />
+    <Content Include="tests\data\TestEdges.dbf" />
+    <Content Include="tests\data\TestEdges.shp" />
+    <Content Include="tests\data\TestEdges.shx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="docs\conf.py" />
+    <Compile Include="cascade\orderer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="cascade\__init__.py" />
+    <Compile Include="docs\examples\example.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="tests\test_orderer.py" />
+    <Compile Include="tests\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="docs" />
+    <Folder Include="docs\files\" />
+    <Folder Include="cascade\" />
+    <Folder Include="docs\images\" />
+    <Folder Include="docs\_static\" />
+    <Folder Include="logs" />
+    <Folder Include="docs\examples\" />
+    <Folder Include="tests" />
+    <Folder Include="tests\data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="C:\VirtualEnvs\cascade\">
+      <Id>cascade</Id>
+      <Version>3.10</Version>
+      <Description>cascade (Python 3.10 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
