@@ -21,7 +21,7 @@ setup(
     packages=["cascade"],
     package_dir={"cascade": "cascade"},
     include_package_data=True,
-    install_requires=["wayfarer"],
+    install_requires=["wayfarer>=0.12.0"],
     zip_safe=False,
     keywords="cascade",
     classifiers=[
