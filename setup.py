@@ -11,7 +11,7 @@ def readme():
 (__version__,) = re.findall('__version__ = "(.*)"', open("cascade/__init__.py").read())
 
 setup(
-    name="cascade",
+    name="cascade-rivers",
     version=__version__,
     description="Python library to assign stream order to hydrometric networks",
     long_description=readme(),
