@@ -76,6 +76,35 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strahler order for </span><span class="si">{</span><span class="n">edge_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">strahler_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The next example shows how to load a network from a Shapefile using the <a class="reference external" href="https://github.com/compassinformatics/wayfarer/">wayfarer</a>
+library, and apply ordering:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fiona</span>
+<span class="kn">from</span> <span class="nn">networkx</span> <span class="kn">import</span> <span class="n">MultiDiGraph</span>
+<span class="kn">from</span> <span class="nn">wayfarer</span> <span class="kn">import</span> <span class="n">loader</span>
+<span class="kn">from</span> <span class="nn">cascade</span> <span class="kn">import</span> <span class="n">orderer</span>
+
+<span class="c1"># load a network from a shapefile</span>
+<span class="n">recs</span> <span class="o">=</span> <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;./docs/examples/HydroEdge11.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_network_from_geometries</span><span class="p">(</span>
+    <span class="n">recs</span><span class="p">,</span>
+    <span class="n">key_field</span><span class="o">=</span><span class="s2">&quot;SEG_CD&quot;</span><span class="p">,</span>
+    <span class="n">keep_geometry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">use_integer_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">graph_type</span><span class="o">=</span><span class="n">MultiDiGraph</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">o</span> <span class="o">=</span> <span class="n">orderer</span><span class="o">.</span><span class="n">Orderer</span><span class="p">(</span><span class="n">code_field</span><span class="o">=</span><span class="s2">&quot;SEG_CD&quot;</span><span class="p">)</span>
+
+<span class="c1"># assign orders to the network</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">assign_order</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+<span class="c1"># loop through orders</span>
+<span class="k">for</span> <span class="n">seg_cd</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">orders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">strahler_order</span><span class="p">,</span> <span class="n">shreve_order</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Segment Code: </span><span class="si">{</span><span class="n">seg_cd</span><span class="si">}</span><span class="s2"> Strahler Order: </span><span class="si">{</span><span class="n">strahler_order</span><span class="si">}</span><span class="s2"> Shreve Order: </span><span class="si">{</span><span class="n">shreve_order</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
 </section>
 
 
