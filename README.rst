@@ -2,16 +2,21 @@
 cascade
 ===============================
 
-| |Version| |Coveralls| |Downloads|
+.. image:: strahler.png
+   :alt: Strahler stream-ordering
+   :align: right
 
-A Python library to assign river order to hydrometric networks
+| |Version| |Coveralls|
+
+A Python library to assign river order to hydrometric networks. Geospatial networks can be loaded
+using https://github.com/compassinformatics/wayfarer/, and then stream ordering can be applied.
 
 * Documentation: https://compassinformatics.github.io/cascade/
 
 Features
 --------
 
-Two stream ordering algorithms:
+Two stream-ordering algorithms:
 
 * Strahler
 * Shreve
