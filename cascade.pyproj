@@ -26,14 +26,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".flake8" />
+    <Content Include=".github\dependabot.yml" />
+    <Content Include=".github\workflows\main.yml" />
     <Content Include=".gitignore" />
     <Content Include=".mypy.ini" />
     <Content Include="AUTHORS.rst" />
     <Content Include="build_docs.ps1" />
+    <Content Include="cascade\py.typed" />
     <Content Include="dev_setup.ps1" />
     <Content Include="docs\authors.rst" />
     <Content Include="docs\code.rst" />
     <Content Include="docs\examples\40_directed_net.dat" />
+    <Content Include="docs\examples\HydroEdge11.dbf" />
+    <Content Include="docs\examples\HydroEdge11.prj" />
+    <Content Include="docs\examples\HydroEdge11.shp" />
+    <Content Include="docs\examples\HydroEdge11.shx" />
     <Content Include="docs\files\layers.zip" />
     <Content Include="docs\files\shreve.lyr" />
     <Content Include="docs\files\strahler.lyr" />
@@ -62,7 +69,7 @@
     <Content Include="LICENSE" />
     <Content Include="logs\placeholder.txt" />
     <Content Include="MANIFEST.in" />
-    <Content Include="ReadMe.rst" />
+    <Content Include="README.rst" />
     <Content Include="requirements.txt" />
     <Content Include="run_local.ps1" />
     <Content Include="tests\data\HydroJunction39.cpg" />
@@ -85,11 +92,13 @@
     </Compile>
     <Compile Include="cascade\__init__.py" />
     <Compile Include="docs\examples\example.py" />
+    <Compile Include="docs\examples\full_example.py" />
     <Compile Include="setup.py" />
     <Compile Include="tests\test_orderer.py" />
     <Compile Include="tests\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".github\workflows\" />
     <Folder Include="docs" />
     <Folder Include="docs\files\" />
     <Folder Include="cascade\" />
@@ -97,6 +106,7 @@
     <Folder Include="docs\_static\" />
     <Folder Include="logs" />
     <Folder Include="docs\examples\" />
+    <Folder Include=".github\" />
     <Folder Include="tests" />
     <Folder Include="tests\data\" />
   </ItemGroup>

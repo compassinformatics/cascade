@@ -18,6 +18,8 @@ setup(
     author="Seth Girvin",
     author_email="sgirvin@compass.ie",
     url="https://github.com/compassinformatics/cascade/",
+    license="MIT",
+    package_data={"cascade": ["py.typed"]},
     packages=["cascade"],
     package_dir={"cascade": "cascade"},
     include_package_data=True,
