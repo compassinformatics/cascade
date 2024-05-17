@@ -2,7 +2,7 @@
 cascade
 ===============================
 
-.. image:: strahler.png
+.. image:: https://github.com/compassinformatics/cascade/blob/main/strahler.png
    :alt: Strahler stream-ordering
    :align: right
 
